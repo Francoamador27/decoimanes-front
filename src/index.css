@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import "tailwindcss";
+
+/* * From Uiverse.io by janisar-hyder */ */
+h1,h2,h3,h4,h5,h6 {
+  font-family: 'Poppins', sans-serif;
+}
+a{font-family: 'Poppins';}
+.card img {
+  display: block;
+  max-width: 60%;
+}
+
+.stack {
+  width: 55%;
+  max-width: 400px;
+  transition: 0.25s ease;
+
+  &:hover {
+    transform: rotate(5deg);
+
+    .card:before {
+      transform: translatey(-2%) rotate(-4deg);
+    }
+
+    .card:after {
+      transform: translatey(2%) rotate(4deg);
+    }
+  }
+}
+
+.card {
+  aspect-ratio: 3 / 2;
+  border: 4px solid;
+  background-color: #fff;
+  position: relative;
+  transition: 0.15s ease;
+  cursor: pointer;
+  padding: 5% 5% 5% 5%;
+
+  &:before,
+  &:after {
+    content: "";
+    display: block;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    border: 4px solid;
+    background-color: #fff;
+    transform-origin: center center;
+    z-index: -1;
+    transition: 0.15s ease;
+    top: 0;
+    left: 0;
+  }
+
+  &:before {
+    transform: translatey(-2%) rotate(-6deg);
+  }
+
+  &:after {
+    transform: translatey(2%) rotate(6deg);
+  }
+}
+
+.image {
+  width: 100%;
+  border: 4px solid;
+  background-color: #eee;
+  aspect-ratio: 1 / 1;
+  position: relative;
+}
+
+.browser-warning {
+  margin-bottom: 4rem;
+}
+
+@supports (aspect-ratio: 1 / 1) {
+  .browser-warning {
+    display: none;
+  }
+}
+
+.titulo-principal{
+  font-family: 'Poppins';
+    font-weight: 500;
+    line-height: 82px;
+    font-size: 73px;
+}
+.description-principal{
+  font-weight: 500;
+  font-size: 22px;
+  font-family: 'Poppins';
+  line-height: 38px;
+}.unboxing-container {
+  max-width: 689px;
+}
+@media (max-width: 768px) {
+  .titulo-principal {
+    font-family: 'Poppins';
+    font-weight: 500;
+    line-height: 50px;
+    font-size: 37px;
+}
+  .description-principal{
+    font-size: 16px;
+    line-height: 24px;
+  }
+}
+body {
+  background: #fefbf5;
+}.checkout .cart-product {
+  display: flex;
+  justify-content: space-around;
+  gap: 14px;
+}.nav-link-active .MuiListItemButton-root {
+  background-color: hsl(173.91deg 99.04% 83.68% / 34%); /* MUI primary.light por defecto */
+}
+.perspective {
+  perspective: 1000px;
+}
+
+.transform-style-preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
