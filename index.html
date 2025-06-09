@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <!-- Charset y viewport -->
   <meta charset="UTF-8" />
@@ -7,8 +8,10 @@
 
   <!-- Título y descripción SEO -->
   <title>Decoimanes - Imanes únicos para momentos inolvidables</title>
-  <meta name="description" content="Creá imanes personalizados con tus fotos favoritas. Decoimanes convierte tus recuerdos en objetos únicos para regalar o decorar tu hogar." />
-  <meta name="keywords" content="imanes personalizados, imanes con fotos, regalos originales, decoración con imanes, Decoimanes" />
+  <meta name="description"
+    content="Creá imanes personalizados con tus fotos favoritas. Decoimanes convierte tus recuerdos en objetos únicos para regalar o decorar tu hogar." />
+  <meta name="keywords"
+    content="imanes personalizados, imanes con fotos, regalos originales, decoración con imanes, Decoimanes" />
   <meta name="author" content="Decoimanes" />
   <link rel="canonical" href="https://decoimanes.com" />
 
@@ -20,7 +23,8 @@
 
   <!-- Open Graph (Facebook, WhatsApp, etc.) -->
   <meta property="og:title" content="Decoimanes - Imanes únicos para momentos inolvidables" />
-  <meta property="og:description" content="Transformá tus recuerdos en imanes personalizados. Regalá algo único y emotivo con Decoimanes." />
+  <meta property="og:description"
+    content="Transformá tus recuerdos en imanes personalizados. Regalá algo único y emotivo con Decoimanes." />
   <meta property="og:image" content="https://decoimanes.com/src/assets/img/seodecoimanes.png" />
   <meta property="og:url" content="https://decoimanes.com" />
   <meta property="og:type" content="website" />
@@ -29,7 +33,8 @@
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Decoimanes - Imanes únicos para momentos inolvidables" />
-  <meta name="twitter:description" content="Transformá tus recuerdos en imanes personalizados. Regalá algo único con Decoimanes." />
+  <meta name="twitter:description"
+    content="Transformá tus recuerdos en imanes personalizados. Regalá algo único con Decoimanes." />
   <meta name="twitter:image" content="https://decoimanes.com/src/assets/img/seodecoimanes.png" />
   <meta name="twitter:site" content="@decoimanes" />
 
@@ -44,11 +49,46 @@
 
   <!-- Cloudflare Turnstile -->
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <!-- Meta Pixel Code -->
+  <script>
+    !function (f, b, e, v, n, t, s) {
+      if (f.fbq) return; n = f.fbq = function () {
+        n.callMethod ?
+          n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+      };
+      if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+      n.queue = []; t = b.createElement(e); t.async = !0;
+      t.src = v; s = b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t, s)
+    }(window, document, 'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1051838633106602');
+    fbq('track', 'PageView');
+  </script>
 
+  <!-- End Meta Pixel Code -->
+
+  <!-- Google Tag Manager -->
+  <script>(function (w, d, s, l, i) {
+      w[l] = w[l] || []; w[l].push({
+        'gtm.start':
+          new Date().getTime(), event: 'gtm.js'
+      }); var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+          'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-P8KXVGXS');</script>
+  <!-- End Google Tag Manager -->
 </head>
 
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<body>
+  <noscript><img height="1" width="1" style="display:none"
+      src="https://www.facebook.com/tr?id=1051838633106602&ev=PageView&noscript=1" /></noscript>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P8KXVGXS" height="0" width="0"
+      style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
 </html>

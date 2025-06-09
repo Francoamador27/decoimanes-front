@@ -1,13 +1,15 @@
 import ResumenProducto from "../components/ResumenProducto";
 import useCont from "../hooks/useCont";
-import { createRef, useState } from 'react';
+import { createRef, useEffect, useState } from 'react';
 import Alerta from '../components/Alerta';
 import { Link } from "react-router-dom";
 import { SiMercadopago } from "react-icons/si";
 import TurnstileCaptcha from '../components/TurnstileCaptcha';
+import useAuthBase from "../hooks/useBaseAuth";
 
 const CheckOut = () => {
     const { pedido, handleSubmitNuevaOrden, total } = useCont();
+    const { user } = useAuthBase(); // obtener el user
     const reglasCantidad = [
         { cantidad: 3, descuento: 10 },
         { cantidad: 6, descuento: 20 },
@@ -37,7 +39,18 @@ const CheckOut = () => {
     const provinciaRef = createRef();
     const [loading, setLoading] = useState(false);
     const [errores, setErrores] = useState([]);
-
+    useEffect(() => {
+        if (user) {
+            if (nameRef.current) nameRef.current.value = user.name || '';
+            if (emailRef.current) emailRef.current.value = user.email || '';
+            if (telefonoRef.current) telefonoRef.current.value = user.telefono || '';
+            if (dniRef.current) dniRef.current.value = user.dni || '';
+            if (direccionRef.current) direccionRef.current.value = user.direccion || '';
+            if (localidadRef.current) localidadRef.current.value = user.localidad || '';
+            if (provinciaRef.current) provinciaRef.current.value = user.provincia || '';
+            if (user.codigo_postal) setCodigoPostal(user.codigo_postal); // También trigger de método envío
+        }
+    }, [user]);
     const determinarMetodoEnvio = (cp) => {
         if (!cp || cp.length < 4) {
             setMetodoEnvio('');
@@ -91,7 +104,7 @@ const CheckOut = () => {
             return;
         }
 
-        let order = { datos, carrtios: pedido ,turnstile_token:captchaCheckout};
+        let order = { datos, carrtios: pedido, turnstile_token: captchaCheckout };
         handleSubmitNuevaOrden(order);
     };
 
@@ -173,8 +186,8 @@ const CheckOut = () => {
                         type="button"
                         disabled={loading || !captchaCheckout}
                         className={`cursor-pointer w-full mt-6 flex justify-center items-center gap-2 py-3 rounded-xl font-semibold transition ${loading || !captchaCheckout
-                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                : 'bg-[#009EE3] text-white hover:bg-[#007bbd]'
+                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                            : 'bg-[#009EE3] text-white hover:bg-[#007bbd]'
                             }`}
                     >
                         {loading ? (

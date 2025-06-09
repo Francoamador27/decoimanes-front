@@ -65,8 +65,15 @@ const Provider = ({ children }) => {
             localStorage.setItem("pedido", JSON.stringify(nuevoPedido)); // ✅ guardar el nuevo array
 
             toast.success('Producto agregado al carrito');
+            return true;
+
         } catch (error) {
-            toast.error('Error al agregar producto al carrito');
+            if (error.response && error.response.data) {
+                const mensaje = error.response.data.message || 'Error al agregar producto al carrito';
+                toast.error(mensaje);
+            } else {
+                toast.error('Error al conectar con el servidor');
+            }
         }
     };
 

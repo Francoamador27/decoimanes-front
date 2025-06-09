@@ -2,6 +2,7 @@ import { CloudArrowUpIcon, LockClosedIcon, ServerIcon } from '@heroicons/react/2
 import Gallery from './Gallery'
 import { Link } from 'react-router-dom'
 import backgroundD from '../assets/img/fondo-1000-600.png';
+import Popup from './PopUp';
 
 const features = [
   {
@@ -53,6 +54,8 @@ export default function FeatureSection() {
           >
             🔍 Ver ejemplos
           </Link>
+
+        <Popup /> 
         </div>
       </div>
     </>

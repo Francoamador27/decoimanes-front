@@ -1,4 +1,5 @@
 import { FaWhatsapp } from 'react-icons/fa';
+import TablaPrecios from './TablaPrecios';
 
 export default function Precios() {
   return (
@@ -8,32 +9,7 @@ export default function Precios() {
 
         {/* Tabla de precios */}
         <div className="overflow-x-auto">
-          <table className="w-full text-left border border-gray-200 rounded-xl overflow-hidden bg-white shadow">
-            <thead className="bg-gray-100 text-gray-600 text-sm">
-              <tr>
-                <th className="px-6 py-3 font-semibold">Cantidad</th>
-                <th className="px-6 py-3 font-semibold">Precio Unitario</th>
-                <th className="px-6 py-3 font-semibold">Total</th>
-              </tr>
-            </thead>
-            <tbody className="text-gray-700 text-sm">
-              <tr className="border-t">
-                <td className="px-6 py-4">1 imán</td>
-                <td className="px-6 py-4">$5.000</td>
-                <td className="px-6 py-4">$5.000</td>
-              </tr>
-              <tr className="border-t">
-                <td className="px-6 py-4">3 imanes</td>
-                <td className="px-6 py-4">$4.500</td>
-                <td className="px-6 py-4">$13.500</td>
-              </tr>
-              <tr className="border-t">
-                <td className="px-6 py-4">6 imanes</td>
-                <td className="px-6 py-4">$4.000</td>
-                <td className="px-6 py-4">$24.000</td>
-              </tr>
-            </tbody>
-          </table>
+          <TablaPrecios />
         </div>
 
         {/* Info de mayorista */}

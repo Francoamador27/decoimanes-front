@@ -10,6 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import useSWR from 'swr';
 import clienteAxios from '../config/axios';
 import { mostrarError } from '../utils/Alertas';
+import Swal from 'sweetalert2';
 
 const Product = () => {
   const { handleAgregarPedido, handleAddCart, producto, pedido } = useCont();
@@ -23,6 +24,7 @@ const Product = () => {
   const [cropData, setCropData] = useState(
     Array(1).fill({ crop: { x: 0, y: 0 }, zoom: 1, croppedAreaPixels: null })
   );
+  const [loadingPantalla, setLoadingPantalla] = useState(false);
 
   const effectiveQuantity = sameImage ? 1 : quantity;
 
@@ -51,15 +53,28 @@ const Product = () => {
       return newArray.slice(0, targetLength);
     });
   };
-
   const handleImageChange = (e, index) => {
     const file = e.target.files[0];
-    if (file) {
-      const newImages = [...images];
-      newImages[index] = URL.createObjectURL(file);
-      setImages(newImages);
+
+    if (!file) return;
+
+    // Tamaño máximo permitido: 10MB = 10 * 1024 * 1024 bytes
+    const maxSize = 10 * 1024 * 1024;
+
+    if (file.size > maxSize) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Imagen demasiado grande',
+        text: 'El tamaño máximo permitido es de 10MB.',
+      });
+      return;
     }
+
+    const newImages = [...images];
+    newImages[index] = URL.createObjectURL(file);
+    setImages(newImages);
   };
+
   const calcularSubtotal = () => {
     const baseSubtotal = quantity * producto.precio;
     let descuento = 0;
@@ -170,16 +185,54 @@ const Product = () => {
       images: archivos,
       id: producto.id
     };
-    handleAddCart(carrito);
+    setLoadingPantalla(true);
+    const exito = await handleAddCart(carrito);
+    setLoadingPantalla(false);
     setMostrarResumen(true);
 
   };
 
 
-
   return (
     <div className="flex">
+      {
+        loadingPantalla && (
+          <div className="fixed inset-0 bg-white bg-opacity-75 flex flex-col justify-center items-center z-50">
+            <div className="w-12 h-12 border-4 border-[#34C6F3] border-t-transparent rounded-full animate-spin mb-4"></div>
+            <p className="text-gray-800 text-lg font-semibold">Subiendo imágenes...</p>
+          </div>
+        )
+      }
       {/* CONTENIDO PRINCIPAL */}
+      <button
+        onClick={() => setMostrarResumen(true)}
+        className="fixed bottom-20 right-9 transform -translate-y-1/2 bg-[#34C6F3] hover:bg-[#28b0dc] text-white p-4 rounded-full shadow-lg z-50"
+        title="Ver carrito"
+      >
+        {/* Badge de cantidad */}
+        {pedido.length > 0 && (
+          <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full shadow-md z-50">
+            {pedido.length}
+          </span>
+        )}
+
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1.3 5.4a1 1 0 001 .6h11.4a1 1 0 001-.6L20 13M9 21h.01M15 21h.01"
+          />
+        </svg>
+      </button>
+
+
       <section className="flex-1 flex flex-col items-center py-10 px-4 text-center">
 
         <div className="mb-6 w-full max-w-screen-lg">
