@@ -125,7 +125,7 @@ const CartAbandoment = () => {
                                 <td className="px-4 py-3">
                                     {carrito.imagenes?.length > 0 ? (
                                         <img
-                                            src={`https://api.decoimanes.com/storage/uploads/${carrito.imagenes[0]}`}
+                                            src={`${import.meta.env.VITE_API_URL}storage/uploads/${carrito.imagenes[0]}`}
                                             alt="Imagen del producto"
                                             className="h-12 rounded"
                                         />

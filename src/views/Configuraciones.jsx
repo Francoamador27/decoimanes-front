@@ -1,112 +1,118 @@
 import React, { useState } from 'react';
-import { Trash2, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
+import clienteAxios from '../config/axios';
+import TablaDescuentos from './Descuentos/TablaDescuentos';
+import FormularioCrearDescuento from '../components/Descuentos/FormularioCrearDescuentos';
+import FormularioCupon from '../components/Descuentos/FormularioCupon';
+import TableCupones from '../components/Descuentos/TableCoupons';
 
-const Configuraciones = () => {
-    const [reglasCantidad, setReglasCantidad] = useState([]);
-    const [metodosEnvio, setMetodosEnvio] = useState([]);
-    const [nuevaRegla, setNuevaRegla] = useState({ cantidad: '', descuento: '' });
-    const [nuevoEnvio, setNuevoEnvio] = useState({ nombre: '', costo: '' });
+const ReglasDescuento = () => {
+    const token = localStorage.getItem('AUTH_TOKEN');
+    const [tab, setTab] = useState('descuentos'); // pestaña activa
+    const [usarFechas, setUsarFechas] = useState(false);
+    const [mensaje, setMensaje] = useState(null);
+    const [error, setError] = useState(null);
 
-    const agregarReglaCantidad = () => {
-        if (nuevaRegla.cantidad && nuevaRegla.descuento) {
-            setReglasCantidad([...reglasCantidad, nuevaRegla]);
-            setNuevaRegla({ cantidad: '', descuento: '' });
+    const [form, setForm] = useState({
+        name: '',
+        type: 'percentage',
+        condition_type: 'quantity',
+        discount_value: '',
+        min_value: '',
+        is_active: true,
+        start_date: '',
+        end_date: '',
+    });
+
+    const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setForm({
+            ...form,
+            [name]: type === 'checkbox' ? checked : value,
+        });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setMensaje(null);
+        setError(null);
+
+        if (!form.name || !form.discount_value || !form.type || !form.condition_type) {
+            setError('Faltan campos obligatorios');
+            return;
         }
-    };
 
-    const eliminarReglaCantidad = (idx) => {
-        setReglasCantidad(reglasCantidad.filter((_, i) => i !== idx));
-    };
+        const payload = {
+            ...form,
+            start_date: usarFechas && form.start_date !== '' ? form.start_date : null,
+            end_date: usarFechas && form.end_date !== '' ? form.end_date : null,
+        };
 
-    const agregarMetodoEnvio = () => {
-        if (nuevoEnvio.nombre && nuevoEnvio.costo) {
-            setMetodosEnvio([...metodosEnvio, { ...nuevoEnvio, reglas: [] }]);
-            setNuevoEnvio({ nombre: '', costo: '' });
+        try {
+            await clienteAxios.post('/api/cart-discounts', payload, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            setMensaje('Regla creada correctamente');
+            setForm({
+                name: '',
+                type: 'percentage',
+                condition_type: 'quantity',
+                discount_value: '',
+                min_value: '',
+                is_active: true,
+                start_date: '',
+                end_date: '',
+            });
+            setUsarFechas(false);
+        } catch (err) {
+            setError('Error al guardar la regla');
+            console.error(err);
         }
-    };
-
-    const eliminarMetodoEnvio = (idx) => {
-        setMetodosEnvio(metodosEnvio.filter((_, i) => i !== idx));
-    };
-
-    const agregarReglaEnvio = (idx, tipo, valor) => {
-        const nuevos = [...metodosEnvio];
-        nuevos[idx].reglas.push({ tipo, valor });
-        setMetodosEnvio(nuevos);
-    };
-
-    const eliminarReglaEnvio = (metodoIdx, reglaIdx) => {
-        const nuevos = [...metodosEnvio];
-        nuevos[metodoIdx].reglas.splice(reglaIdx, 1);
-        setMetodosEnvio(nuevos);
     };
 
     return (
-        <div className="space-y-10">
-            <h2 className="text-2xl font-bold">Configuraciones de Descuentos y Envíos</h2>
-
-            {/* Reglas por cantidad */}
-            <div className="bg-white p-6 rounded shadow">
-                <h3 className="text-xl font-semibold mb-4">Reglas de descuento por cantidad</h3>
-                <div className="flex gap-4 mb-4">
-                    <input type="number" placeholder="Cantidad mínima" className="border px-3 py-2 rounded w-1/3" value={nuevaRegla.cantidad} onChange={(e) => setNuevaRegla({ ...nuevaRegla, cantidad: e.target.value })} />
-                    <input type="number" placeholder="% Descuento" className="border px-3 py-2 rounded w-1/3" value={nuevaRegla.descuento} onChange={(e) => setNuevaRegla({ ...nuevaRegla, descuento: e.target.value })} />
-                    <button onClick={agregarReglaCantidad} className="bg-blue-600 text-white px-4 py-2 rounded"><Plus size={16} /> Agregar</button>
-                </div>
-                <ul className="divide-y">
-                    {reglasCantidad.map((r, idx) => (
-                        <li key={idx} className="flex justify-between items-center py-2">
-                            <span>Si cantidad &gt; {r.cantidad}, aplicar {r.descuento}%</span>
-                            <button onClick={() => eliminarReglaCantidad(idx)} className="text-red-500 hover:text-red-700"><Trash2 size={16} /></button>
-                        </li>
-                    ))}
-                </ul>
+        <div className="bg-white p-6 rounded shadow">
+            <div className="flex space-x-4 border-b mb-6 pb-2">
+                {['descuentos', 'crear-descuento', 'cupones', 'crear-cupon'].map((t) => (
+                    <button
+                        key={t}
+                        onClick={() => setTab(t)}
+                        className={`text-sm font-semibold px-4 py-2 rounded-t ${tab === t ? 'bg-[#008DD2] text-white' : 'text-gray-600 hover:text-black'
+                            }`}
+                    >
+                        {t === 'descuentos' && 'Descuentos'}
+                        {t === 'crear-descuento' && 'Crear Descuento'}
+                        {t === 'cupones' && 'Cupones'}
+                        {t === 'crear-cupon' && 'Crear Cupón'}
+                    </button>
+                ))}
             </div>
 
-            {/* Métodos de envío */}
-            <div className="bg-white p-6 rounded shadow">
-                <h3 className="text-xl font-semibold mb-4">Métodos de Envío</h3>
-                <div className="flex gap-4 mb-4">
-                    <input type="text" placeholder="Nombre del envío" className="border px-3 py-2 rounded w-1/3" value={nuevoEnvio.nombre} onChange={(e) => setNuevoEnvio({ ...nuevoEnvio, nombre: e.target.value })} />
-                    <input type="number" placeholder="Costo" className="border px-3 py-2 rounded w-1/3" value={nuevoEnvio.costo} onChange={(e) => setNuevoEnvio({ ...nuevoEnvio, costo: e.target.value })} />
-                    <button onClick={agregarMetodoEnvio} className="bg-blue-600 text-white px-4 py-2 rounded"><Plus size={16} /> Agregar</button>
+            {tab === 'descuentos' && <TablaDescuentos />}
+
+            {tab === 'crear-descuento' && (
+                <>
+                    <FormularioCrearDescuento
+
+                    />
+                </>
+            )}
+
+            {tab === 'cupones' && (
+                <div className="text-gray-600 text-sm">
+                    <TableCupones /> 
+                        
+                                       </div>
+            )}
+
+            {tab === 'crear-cupon' && (
+                <div className="text-gray-600 text-sm">
+                    <FormularioCupon />
                 </div>
-                <ul className="divide-y">
-                    {metodosEnvio.map((m, idx) => (
-                        <li key={idx} className="py-4">
-                            <div className="flex justify-between items-center">
-                                <span>{m.nombre} - ${m.costo}</span>
-                                <button onClick={() => eliminarMetodoEnvio(idx)} className="text-red-500 hover:text-red-700"><Trash2 size={16} /></button>
-                            </div>
-                            <div className="ml-4 mt-2 space-y-2">
-                                <p className="text-sm font-medium">Reglas de este método:</p>
-                                <ul className="list-disc pl-5 text-sm">
-                                    {m.reglas?.map((regla, i) => (
-                                        <li key={i} className="flex justify-between items-center">
-                                            <span>{regla.tipo === 'total' ? `Si total > $${regla.valor}` : `Si cantidad > ${regla.valor}`} → Envío gratis</span>
-                                            <button onClick={() => eliminarReglaEnvio(idx, i)} className="ml-2 text-red-500 hover:text-red-700"><Trash2 size={16} /></button>
-                                        </li>
-                                    ))}
-                                </ul>
-                                <div className="flex gap-2 items-center">
-                                    <select onChange={(e) => agregarReglaEnvio(idx, e.target.value, '')} className="border px-2 py-1 rounded">
-                                        <option value="">Agregar regla</option>
-                                        <option value="total">Gratis si total </option>
-                                        <option value="cantidad">Gratis si cantidad </option>
-                                    </select>
-                                    <input type="number" onBlur={(e) => {
-                                        const tipo = e.target.previousSibling.value;
-                                        if (tipo) agregarReglaEnvio(idx, tipo, e.target.value);
-                                        e.target.value = '';
-                                    }} className="border px-2 py-1 rounded w-28" placeholder="Valor" />
-                                </div>
-                            </div>
-                        </li>
-                    ))}
-                </ul>
-            </div>
+            )}
         </div>
     );
 };
 
-export default Configuraciones;
+export default ReglasDescuento;

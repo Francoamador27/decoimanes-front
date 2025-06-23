@@ -97,6 +97,8 @@ const Provider = ({ children }) => {
 
 
             if (init_point) {
+                localStorage.removeItem("pedido"); // ✅ limpiar el carrito solo si se creó la preferencia de pago
+                setPedido([]); // 🧼 limpiar el estado del pedido
                 window.location.href = init_point;
             } else {
                 toast.error("No se recibió un link de pago.", {
@@ -112,14 +114,13 @@ const Provider = ({ children }) => {
             });
         }
     };
-
     const handleEliminarPedido = async (id) => {
+        const nuevoPedido = pedido.filter(producto => producto.id !== id);
+        setPedido(nuevoPedido);
+        localStorage.setItem("pedido", JSON.stringify(nuevoPedido)); // 🧼 limpiás antes del DELETE
+
         try {
             await clienteAxios.delete(`/api/carritos/${id}`);
-
-            const nuevoPedido = pedido.filter(producto => producto.id !== id);
-            setPedido(nuevoPedido);
-            localStorage.setItem("pedido", JSON.stringify(nuevoPedido)); // ⬅️ actualizás localStorage también
 
             toast.error("Producto eliminado del carrito", {
                 position: "top-right",
@@ -131,7 +132,15 @@ const Provider = ({ children }) => {
                 progress: undefined,
             });
         } catch (error) {
-            toast.error("No se pudo eliminar el producto.");
+            toast.error("Producto eliminado del carrito", {
+                position: "top-right",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+            });
         }
     };
 

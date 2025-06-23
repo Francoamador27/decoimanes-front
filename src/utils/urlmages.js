@@ -1,2 +1,2 @@
-const urlImage = 'https://api.decoimanes.com/storage/uploads/';
+const urlImage = `${import.meta.env.VITE_API_URL}storage/uploads/`;
 export default urlImage;

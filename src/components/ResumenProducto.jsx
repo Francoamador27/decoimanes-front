@@ -12,7 +12,7 @@ const ResumenProducto = (props) => {
                     {producto.imagenes?.map((image, imgIndex) => (
                         <img
                             key={imgIndex}
-                            src={`https://api.decoimanes.com/public/storage/uploads/${image}`}
+                            src={`${import.meta.env.VITE_API_URL}public/storage/uploads/${image}`}
                             alt={`Imagen carrito ${index + 1} - ${imgIndex + 1}`}
                             className="w-10 h-10 object-cover rounded"
                         />
@@ -29,7 +29,7 @@ const ResumenProducto = (props) => {
                 </div>
                 <button onClick={() => handleEliminarPedido(producto.id)} className="text-red-600 cursor-pointer hover:text-red-800">
                     <Trash2 size={20} className="inline-block mr-1" />
-                    
+
                 </button>
 
             </div>

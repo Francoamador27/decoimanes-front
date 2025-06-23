@@ -20,6 +20,10 @@ const Login = () => {
 
     const { login } = UseAuth({ middleware: 'guest', url: '/mi-cuenta' });
 
+    // Leer entorno
+    const entorno = import.meta.env.VITE_ENTORNO;
+    const esLocal = entorno === 'local';
+
     const handleLogin = async (e) => {
         e.preventDefault();
         const datos = {
@@ -46,13 +50,14 @@ const Login = () => {
     };
 
     // Validaciones
-    const camposLoginCompletos = email.trim() !== '' && password.trim() !== '' && captchaLogin;
-    const camposResetCompletos = emailReset.trim() !== '' && captchaReset;
+    const camposLoginCompletos = email.trim() !== '' && password.trim() !== '' && (esLocal || captchaLogin);
+    const camposResetCompletos = emailReset.trim() !== '' && (esLocal || captchaReset);
 
     return (
         <div className='min-h-screen flex items-center justify-center bg-gray-100'>
             <div className="w-96 h-[450px] relative perspective">
                 <div className={`transition-transform duration-700 relative w-full h-full transform-style-preserve-3d ${showReset ? 'rotate-y-180' : ''}`}>
+                    
                     {/* Login */}
                     <div className="absolute inset-0 backface-hidden bg-white rounded-lg shadow-lg p-6">
                         <div className="flex flex-col justify-center items-center space-y-2">
@@ -85,14 +90,13 @@ const Login = () => {
                                 </button>
                             </div>
 
-
                             {errores && (
                                 <div className="space-y-1">
                                     <Alerta>{errores}</Alerta>
                                 </div>
                             )}
 
-                            <TurnstileCaptcha onVerify={setCaptchaLogin} />
+                            {!esLocal && <TurnstileCaptcha onVerify={setCaptchaLogin} />}
 
                             <div className="text-center">
                                 <button type="button" onClick={() => setShowReset(true)} className="text-blue-500 font-medium hover:underline">
@@ -137,7 +141,7 @@ const Login = () => {
                                 </div>
                             )}
 
-                            <TurnstileCaptcha onVerify={setCaptchaReset} />
+                            {!esLocal && <TurnstileCaptcha onVerify={setCaptchaReset} />}
 
                             <div className="flex justify-between items-center">
                                 <button

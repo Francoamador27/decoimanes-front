@@ -24,6 +24,7 @@ import ResetPassword from "./views/ResetPassword";
 import Contacto from "./components/Contacto";
 import Configuraciones from "./views/Configuraciones";
 import QuienesSomos from "./components/QuienesSomos";
+import EditarCupon from "./components/EditarCupon";
 
 const router = createBrowserRouter([
   {
@@ -67,6 +68,10 @@ const router = createBrowserRouter([
       {
         path: "/admin-dash/configuraciones",
         element: <Configuraciones />
+      },
+      {
+        path: "/admin-dash/descuentos/:id",
+        element: <EditarCupon />
       }
 
     ],

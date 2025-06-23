@@ -66,14 +66,18 @@ const DetalleOrden = () => {
 
     if (isLoading) return <p className="p-4 text-gray-600">Cargando pedido...</p>;
     if (error) return <p className="p-4 text-red-600">Error al cargar el pedido.</p>;
+    console.log(pedido);
     return (
         <div className="max-w-6xl mx-auto p-6 space-y-8">
+
+            {/* ENCABEZADO PRINCIPAL */}
             <div className="bg-white shadow-md rounded-2xl p-6 border border-gray-200">
-                <h1 className="text-3xl font-bold text-gray-800 mb-4">Detalle del Pedido #{pedido.id}</h1>
+                <h1 className="text-3xl font-bold text-gray-800 mb-6">Detalle del Pedido #{pedido.id}</h1>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Información del cliente */}
-                    <div className="bg-gray-50 rounded-xl p-5">
+
+                    {/* BOX: Información del Cliente */}
+                    <div className="bg-gray-50 rounded-xl p-5 shadow-sm border border-gray-100">
                         <h2 className="text-lg font-semibold text-gray-700 mb-3">Información del Cliente</h2>
                         <div className="space-y-1 text-sm text-gray-600">
                             <p><strong>Nombre:</strong> {pedido.usuario.name}</p>
@@ -85,54 +89,72 @@ const DetalleOrden = () => {
                         </div>
                     </div>
 
-                    {/* Resumen del pedido */}
-                    <div className="bg-gray-50 rounded-xl p-5">
-                        <h2 className="text-lg font-semibold text-gray-700 mb-3">Resumen del Pedido</h2>
-                        <div className="space-y-1 text-sm text-gray-600">
-                            <p><strong>Total:</strong> ${pedido.total}</p>
+                    {/* BOX: Resumen del Pedido */}
+                    <div className="bg-gray-50 rounded-xl p-5 shadow-sm border border-gray-100 space-y-4">
+                        <h2 className="text-lg font-semibold text-gray-700">Resumen del Pedido</h2>
+                        <div className="text-sm text-gray-700 space-y-2">
+                            <p><strong>Total sin descuentos:</strong> ${pedido.total_sin_descuento}</p>
+                            <p><strong>Descuento por regla:</strong> ${pedido.descuento_aplicado ?? 0}</p>
+                            <p><strong>Descuento por cupón:</strong> ${pedido.monto_descuento_cupon ?? 0}</p>
+                            <p><strong>Código de cupón:</strong> {pedido.codigo_cupon || 'No aplicado'}</p>
+                            <p className="font-semibold"><strong>Total final:</strong> ${pedido.total}</p>
+                        </div>
+
+                        <div className="text-sm text-gray-700 space-y-1">
                             <p><strong>Fecha:</strong> {new Date(pedido.created_at).toLocaleDateString()}</p>
                             <p><strong>Estado actual:</strong> {pedido.estado}</p>
-
-                            <p className="mt-3"><strong>Método de envío:</strong> {
-                                pedido.metodo_envio === 'andreani' ? 'Envío por Andreani' :
-                                    pedido.metodo_envio === 'cordoba' ? 'Entrega en Córdoba Capital' :
-                                        pedido.metodo_envio || 'No especificado'
-                            }</p>
-                            <p><strong>Costo de envío:</strong> ${pedido.costo_envio || 0}</p>
-
-                            <div className="mt-4">
-                                <label className="block text-sm font-medium text-gray-700">Cambiar estado</label>
-                                <select
-                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                                    value={nuevoEstado}
-                                    onChange={(e) => setNuevoEstado(e.target.value)}
-                                >
-                                    <option value="">Seleccionar estado</option>
-                                    {estados.map(e => (
-                                        <option key={e} value={e}>{e}</option>
-                                    ))}
-                                </select>
-                                <button
-                                    onClick={actualizarEstado}
-                                    className="mt-3 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition"
-                                >
-                                    Actualizar Estado
-                                </button>
-                            </div>
-
-                            <hr className="my-4" />
-                            <h3 className="font-semibold">Detalles de Pago</h3>
-                            <p><strong>Estado de Pago:</strong> {pedido.estado_pago}</p>
-                            <p><strong>ID de Pago:</strong> {pedido.payment_id}</p>
-                            <p><strong>Tipo:</strong> {pedido.payment_type}</p>
-                            <p><strong>Método:</strong> {pedido.payment_method}</p>
-                            <p><strong>Pagado en:</strong> {pedido.paid_at || 'No se ha acreditado'}</p>
                         </div>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    {/* BOX: Envío */}
+                    <div className="bg-gray-50 rounded-xl p-5 shadow-sm border border-gray-100">
+                        <h2 className="text-lg font-semibold text-gray-700 mb-3">Envío</h2>
+                        <p><strong>Método de envío:</strong> {
+                            pedido.metodo_envio === 'andreani' ? 'Envío por Andreani' :
+                                pedido.metodo_envio === 'cordoba' ? 'Entrega en Córdoba Capital' :
+                                    pedido.metodo_envio || 'No especificado'
+                        }</p>
+                        <p><strong>Costo de envío:</strong> ${pedido.costo_envio || 0}</p>
+                    </div>
+
+                    {/* BOX: Estado del Pedido */}
+                    <div className="bg-gray-50 rounded-xl p-5 shadow-sm border border-gray-100">
+                        <h2 className="text-lg font-semibold text-gray-700 mb-3">Actualizar Estado</h2>
+                        <select
+                            className="w-full rounded-md border-gray-300 shadow-sm"
+                            value={nuevoEstado}
+                            onChange={(e) => setNuevoEstado(e.target.value)}
+                        >
+                            <option value="">Seleccionar estado</option>
+                            {estados.map(e => (
+                                <option key={e} value={e}>{e}</option>
+                            ))}
+                        </select>
+                        <button
+                            onClick={actualizarEstado}
+                            className="mt-3 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition"
+                        >
+                            Actualizar Estado
+                        </button>
+                    </div>
+                </div>
+
+                {/* BOX: Detalles de Pago */}
+                <div className="bg-gray-50 rounded-xl p-5 shadow-sm border border-gray-100 mt-6">
+                    <h2 className="text-lg font-semibold text-gray-700 mb-3">Detalles de Pago</h2>
+                    <div className="text-sm text-gray-700 space-y-1">
+                        <p><strong>Estado de Pago:</strong> {pedido.estado_pago}</p>
+                        <p><strong>ID de Pago:</strong> {pedido.payment_id}</p>
+                        <p><strong>Tipo:</strong> {pedido.payment_type}</p>
+                        <p><strong>Método:</strong> {pedido.payment_method}</p>
+                        <p><strong>Pagado en:</strong> {pedido.paid_at || 'No se ha acreditado'}</p>
                     </div>
                 </div>
             </div>
 
-            {/* Carritos */}
+            {/* BOX: Carritos */}
             <div className="bg-white shadow-md rounded-2xl p-6 border border-gray-200">
                 <h2 className="text-2xl font-semibold text-gray-800 mb-4">Carritos en el Pedido</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -165,6 +187,7 @@ const DetalleOrden = () => {
                 </div>
             </div>
         </div>
+
 
     );
 };
