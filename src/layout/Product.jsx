@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Cropper from 'react-easy-crop';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import getCroppedImg from '../utils/cropImage';
@@ -21,6 +21,28 @@ const Product = () => {
   const [sameImage, setSameImage] = useState(false);
   const [images, setImages] = useState(Array(1).fill(null));
   const [croppedImages, setCroppedImages] = useState(Array(1).fill(null));
+  const [subtotal, setSubtotal] = useState(null);
+  const [reglasDescuento, setReglasDescuento] = useState([]);
+useEffect(() => {
+  const obtenerReglas = async () => {
+    try {
+      const response = await clienteAxios('/api/cart-discounts');
+      setReglasDescuento(response.data?.data || []);
+    } catch (error) {
+      console.error('Error cargando reglas de descuento:', error);
+    }
+  };
+  obtenerReglas();
+}, []);
+useEffect(() => {
+  const obtenerSubtotal = async () => {
+    const res = await calcularSubtotal();
+    setSubtotal(res);
+  };
+  if (producto && reglasDescuento.length > 0) {
+    obtenerSubtotal();
+  }
+}, [producto, quantity, reglasDescuento]);
   const [cropData, setCropData] = useState(
     Array(1).fill({ crop: { x: 0, y: 0 }, zoom: 1, croppedAreaPixels: null })
   );
@@ -75,23 +97,36 @@ const Product = () => {
     setImages(newImages);
   };
 
-  const calcularSubtotal = () => {
-    const baseSubtotal = quantity * producto.precio;
-    let descuento = 0;
+const calcularSubtotal = () => {
+  const precio = producto?.precio ?? 0;
+  const baseSubtotal = quantity * precio;
+  let descuento = 0;
 
-    if (quantity >= 6) {
-      descuento = 0.2;
-    } else if (quantity >= 3) {
-      descuento = 0.1;
-    }
+  // Aplicar reglas si están cargadas
+  const reglasCantidad = reglasDescuento
+    .filter(regla =>
+      regla.is_active &&
+      regla.condition_type === 'quantity' &&
+      parseFloat(regla.min_value) <= quantity
+    )
+    .map(regla => ({
+      min: parseFloat(regla.min_value),
+      porcentaje: parseFloat(regla.discount_value) / 100
+    }));
 
-    const totalConDescuento = baseSubtotal * (1 - descuento);
-    return {
-      base: baseSubtotal,
-      descuento: descuento,
-      total: totalConDescuento
-    };
+  if (reglasCantidad.length > 0) {
+    descuento = Math.max(...reglasCantidad.map(r => r.porcentaje));
+  }
+
+  const totalConDescuento = baseSubtotal * (1 - descuento);
+
+  return {
+    base: baseSubtotal,
+    descuento,
+    total: totalConDescuento
   };
+};
+
   const handleRemoveImage = (index) => {
     setImages((prev) => {
       const newArr = [...prev];
@@ -311,24 +346,36 @@ const Product = () => {
 
           </div>
         </div>
-        {producto && (
+        {producto && subtotal && (
           <div className="text-left">
-            <p className="text-lg text-gray-800 font-semibold">Precio por imán: ${producto.precio}</p>
+            <p className="text-lg text-gray-800 font-semibold">
+              Precio por imán: ${producto.precio}
+            </p>
 
             <div className="mt-2 text-sm text-gray-700">
-              <p>Subtotal: ${calcularSubtotal().base.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+              <p>
+                Subtotal: $
+                {subtotal.base.toLocaleString('es-AR', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </p>
 
-              {calcularSubtotal().descuento > 0 && (
-                <p>Descuento aplicado: {calcularSubtotal().descuento * 100}%</p>
+              {subtotal.descuento > 0 && (
+                <p>Descuento aplicado: {subtotal.descuento * 100}%</p>
               )}
 
               <p className="font-bold text-lg">
-                Total: ${calcularSubtotal().total.toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                Total: $
+                {subtotal.total.toLocaleString('es-AR', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
               </p>
-
             </div>
           </div>
         )}
+
 
         {/* Cuadrantes */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-screen-lg">
