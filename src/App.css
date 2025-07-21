@@ -58,3 +58,9 @@
 .rotate-y-180 {
   transform: rotateY(180deg);
 }
+.checkout .cart-product {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 14px;
+}

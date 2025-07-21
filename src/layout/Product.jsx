@@ -16,6 +16,7 @@ const Product = () => {
   const { handleAgregarPedido, handleAddCart, producto, pedido } = useCont();
 
   const [mostrarResumen, setMostrarResumen] = useState(false);
+  const [mostrarPopup, setMostrarPopup] = useState(true);
 
   const [quantity, setQuantity] = useState(1);
   const [sameImage, setSameImage] = useState(false);
@@ -23,26 +24,26 @@ const Product = () => {
   const [croppedImages, setCroppedImages] = useState(Array(1).fill(null));
   const [subtotal, setSubtotal] = useState(null);
   const [reglasDescuento, setReglasDescuento] = useState([]);
-useEffect(() => {
-  const obtenerReglas = async () => {
-    try {
-      const response = await clienteAxios('/api/cart-discounts');
-      setReglasDescuento(response.data?.data || []);
-    } catch (error) {
-      console.error('Error cargando reglas de descuento:', error);
+  useEffect(() => {
+    const obtenerReglas = async () => {
+      try {
+        const response = await clienteAxios('/api/cart-discounts');
+        setReglasDescuento(response.data?.data || []);
+      } catch (error) {
+        console.error('Error cargando reglas de descuento:', error);
+      }
+    };
+    obtenerReglas();
+  }, []);
+  useEffect(() => {
+    const obtenerSubtotal = async () => {
+      const res = await calcularSubtotal();
+      setSubtotal(res);
+    };
+    if (producto && reglasDescuento.length > 0) {
+      obtenerSubtotal();
     }
-  };
-  obtenerReglas();
-}, []);
-useEffect(() => {
-  const obtenerSubtotal = async () => {
-    const res = await calcularSubtotal();
-    setSubtotal(res);
-  };
-  if (producto && reglasDescuento.length > 0) {
-    obtenerSubtotal();
-  }
-}, [producto, quantity, reglasDescuento]);
+  }, [producto, quantity, reglasDescuento]);
   const [cropData, setCropData] = useState(
     Array(1).fill({ crop: { x: 0, y: 0 }, zoom: 1, croppedAreaPixels: null })
   );
@@ -97,35 +98,35 @@ useEffect(() => {
     setImages(newImages);
   };
 
-const calcularSubtotal = () => {
-  const precio = producto?.precio ?? 0;
-  const baseSubtotal = quantity * precio;
-  let descuento = 0;
+  const calcularSubtotal = () => {
+    const precio = producto?.precio ?? 0;
+    const baseSubtotal = quantity * precio;
+    let descuento = 0;
 
-  // Aplicar reglas si están cargadas
-  const reglasCantidad = reglasDescuento
-    .filter(regla =>
-      regla.is_active &&
-      regla.condition_type === 'quantity' &&
-      parseFloat(regla.min_value) <= quantity
-    )
-    .map(regla => ({
-      min: parseFloat(regla.min_value),
-      porcentaje: parseFloat(regla.discount_value) / 100
-    }));
+    // Aplicar reglas si están cargadas
+    const reglasCantidad = reglasDescuento
+      .filter(regla =>
+        regla.is_active &&
+        regla.condition_type === 'quantity' &&
+        parseFloat(regla.min_value) <= quantity
+      )
+      .map(regla => ({
+        min: parseFloat(regla.min_value),
+        porcentaje: parseFloat(regla.discount_value) / 100
+      }));
 
-  if (reglasCantidad.length > 0) {
-    descuento = Math.max(...reglasCantidad.map(r => r.porcentaje));
-  }
+    if (reglasCantidad.length > 0) {
+      descuento = Math.max(...reglasCantidad.map(r => r.porcentaje));
+    }
 
-  const totalConDescuento = baseSubtotal * (1 - descuento);
+    const totalConDescuento = baseSubtotal * (1 - descuento);
 
-  return {
-    base: baseSubtotal,
-    descuento,
-    total: totalConDescuento
+    return {
+      base: baseSubtotal,
+      descuento,
+      total: totalConDescuento
+    };
   };
-};
 
   const handleRemoveImage = (index) => {
     setImages((prev) => {
@@ -271,8 +272,54 @@ const calcularSubtotal = () => {
       <section className="flex-1 flex flex-col items-center py-10 px-4 text-center">
 
         <div className="mb-6 w-full max-w-screen-lg">
+          {/* 🟢 Recuadro informativo */}
+          {mostrarPopup && (
+            <div className="relative bg-green-100/80 border border-green-300 text-green-900 text-sm rounded-xl p-5 mb-6 shadow-sm">
+              <button
+                onClick={() => setMostrarPopup(false)}
+                className="absolute top-2 right-3 text-green-900 hover:text-green-700 text-xl font-bold"
+                aria-label="Cerrar"
+              >
+                ×
+              </button>
+
+              <h3 className="text-base font-semibold mb-2">ℹ️ Instrucciones importantes</h3>
+
+              <p className="mb-2">
+                <strong>📷 Tipo de pedido:</strong> Si seleccionás <strong>“Una sola imagen para todos los imanes”</strong>, podés subir una sola imagen y pedir, por ejemplo, <strong>10 imanes iguales</strong>. Luego podés repetir el proceso con otra imagen si querés pedir otros 10 iguales pero con otra foto.
+              </p>
+
+              <p className="mb-4">
+                Si elegís <strong>“Diferentes imágenes por imán”</strong>, deberás subir una imagen distinta para cada unidad que vayas a encargar.
+              </p>
+
+              <div className="border-t border-green-300 pt-3 mt-3">
+                <p className="mb-1">
+                  <strong>🚫 Formato HEIC / HEIF no compatible:</strong> Las fotos en formato <strong>.HEIC</strong> o <strong>.HEIF</strong> (usado por iPhones) <span className="underline">no pueden ser subidas</span> directamente en la página.
+                </p>
+                <p className="mb-1">
+                  👉 Si tenés fotos en ese formato, podés <strong>enviarlas por WhatsApp</strong> o convertirlas fácilmente a JPG usando esta web:
+                </p>
+                <p className="mb-3">
+                  🔄 <a href="https://convertio.co/es/heif-jpg/" target="_blank" rel="noopener noreferrer" className="text-blue-700 underline hover:text-blue-900">
+                    convertio.co/es/heif-jpg/
+                  </a>
+                </p>
+
+                <p className="mb-1">
+                  <strong>📏 Margen de fabricación:</strong> Al momento de fabricar los imanes, se dobla aproximadamente <strong>1 mm</strong> de cada borde.
+                </p>
+                <p>
+                  👉 Evitá colocar textos o detalles importantes <strong>cerca de los bordes</strong> de la imagen, ya que pueden recortarse.
+                </p>
+              </div>
+            </div>
+          )}
+
+
+          {/* Radios de tipo de pedido */}
           <label className="text-lg font-semibold block mb-2 text-gray-700">Tipo de pedido</label>
-          <div className="flex justify-center gap-6 items-center">
+          <div className="flex flex-col sm:flex-row justify-center gap-6 items-start sm:items-center">
             <label className="flex items-center gap-2 cursor-pointer">
               <input
                 type="radio"
@@ -294,12 +341,14 @@ const calcularSubtotal = () => {
                   setSameImage(false);
                   handleQuantityChange({ target: { value: quantity } });
                 }}
-                className="h-4 w-4 text-blue-600 bg-white border-gray-300 focus:ring-blue-500 focus:ring-2 rounded-full block"
+                className="h-4 w-4 text-blue-600 bg-white border-gray-300 focus:ring-blue-500 focus:ring-2 rounded-full"
               />
               <span className="text-sm text-gray-700">Diferentes imágenes por imán</span>
             </label>
           </div>
         </div>
+
+
 
         {/* Cantidad de imanes */}
         <div className="flex">
@@ -430,7 +479,7 @@ const calcularSubtotal = () => {
                   <span className="mb-1 font-medium">Subí tu imagen</span>
                   <input
                     type="file"
-                    accept="image/*"
+                    accept="image/jpeg, image/jpg, image/png, image/webp, image/gif"
                     className="hidden"
                     onChange={(e) => handleImageChange(e, index)}
                   />

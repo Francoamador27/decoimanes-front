@@ -22,6 +22,9 @@ import {
     Package,
     Users,
     ShoppingBasket,
+    GalleryThumbnails,
+    FilePlus2,
+    MessageSquareQuote
 } from 'lucide-react';
 import UseAuth from '../hooks/useAuth';
 
@@ -42,6 +45,9 @@ const AdminSidebar = () => {
         { text: 'Usuarios', icon: <Users size={20} />, path: '/admin-dash/usuarios' },
         { text: 'Carritos Abandonados', icon: <ShoppingBasket size={20} />, path: '/admin-dash/carritos-abandonados' },
         { text: 'Configuraciones', icon: <MenuIcon />, path: '/admin-dash/configuraciones' }, // 👈 nuevo ítem
+        { text: 'Testimonios', icon: <MessageSquareQuote />, path: '/admin-dash/testimonios' },
+        { text: 'Ejemplos', icon: <GalleryThumbnails />, path: '/admin-dash/ejemplos' },
+        { text: 'Crear un pedido', icon: <FilePlus2 />, path: '/product' },
 
     ];
 

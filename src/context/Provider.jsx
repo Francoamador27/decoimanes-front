@@ -51,10 +51,11 @@ const Provider = ({ children }) => {
             formData.append('cantidad', carrito.quantity);
             formData.append('session_token', sessionToken);
 
+            console.log('Antes del append:', carrito.images.length);
             carrito.images.forEach((img, index) => {
                 formData.append(`imagenes[${index}]`, img);
             });
-
+            console.log('Total imágenes a enviar:', carrito.images.length);
             const { data } = await clienteAxios.post('/api/carritos', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' },
             });
@@ -79,11 +80,15 @@ const Provider = ({ children }) => {
 
     const handleSubmitNuevaOrden = async (order) => {
         try {
+            const tokenUser = localStorage.getItem("AUTH_TOKEN");
 
             const url = `/api/pedidos`;
+            console.log("tokenUser", tokenUser);
             const respuesta = await clienteAxios.post(url, order, {
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${tokenUser}` // ✅ AÑADIDO
+
                 }
             });
 

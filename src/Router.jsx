@@ -25,6 +25,9 @@ import Contacto from "./components/Contacto";
 import Configuraciones from "./views/Configuraciones";
 import QuienesSomos from "./components/QuienesSomos";
 import EditarCupon from "./components/EditarCupon";
+import TestimoniosForm from "./components/TestimoniosForm";
+import PanelTestimonios from "./components/Testimonios/PanelTestimonios";
+import EjemplosPanel from "./components/EjemplosAdmin/EjemplosPanel";
 
 const router = createBrowserRouter([
   {
@@ -65,6 +68,8 @@ const router = createBrowserRouter([
       { path: "/admin-dash/clientes/:id", element: <DetalleCliente /> }, // /admin-dash/ordenes/15
       { path: '/admin-dash/usuarios', element: <Users /> },
       { path: '/admin-dash/carritos-abandonados', element: <CartAbandoment /> },
+      { path: '/admin-dash/testimonios', element: <PanelTestimonios /> },
+      { path: '/admin-dash/ejemplos', element: <EjemplosPanel /> },
       {
         path: "/admin-dash/configuraciones",
         element: <Configuraciones />

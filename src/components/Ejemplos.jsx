@@ -16,6 +16,7 @@ import img3 from '../assets/img/ejemplos/ejemplo-3.jpg';
 import img4 from '../assets/img/ejemplos/ejemplo-4.jpg';
 import img5 from '../assets/img/ejemplos/ejemplo-5.jpg';
 import img6 from '../assets/img/ejemplos/ejemplo-6.jpg';
+import GaleriaSwiper from "./GaleriaSwiper";
 
 export default function Ejemplos() {
   const [index, setIndex] = useState(-1);
@@ -95,60 +96,10 @@ export default function Ejemplos() {
       </div>
 
       {/* Galería */}
-      <section className="mt-16">
-        <h2 className="text-2xl font-bold text-orange-500 mb-6">Galería</h2>
-        <Swiper
-          loop={true}
-          effect="coverflow"
-          grabCursor={true}
-          centeredSlides={true}
-          slidesPerView={'auto'}
-          coverflowEffect={{
-            rotate: 50,
-            stretch: 0,
-            depth: 100,
-            modifier: 1,
-            slideShadows: true,
-          }}
-          navigation={true}
+      <div className="mt-8">
+<GaleriaSwiper />
+</div>
 
-          pagination={{ clickable: true }}
-          modules={[EffectCoverflow, Pagination,Navigation]}
-          className="w-full max-w-5xl"
-        >
-          {galleryImages.map((img, i) => (
-            <SwiperSlide
-              key={i}
-              style={{
-                width: isMobile ? '300px' : '600px',
-                height: isMobile ? '200px' : '400px',
-                borderRadius: '12px',
-                overflow: 'hidden',
-                position: 'relative'
-              }}
-            >
-              <div
-                className="absolute top-2 right-5 bg-black/60 hover:bg-black/80  p-2 rounded-full cursor-pointer z-10"
-                onClick={() => setIndex(i)}
-                title="Ver en grande"
-              >
-                <Search className="w-4 h-4" />
-              </div>
-              <img
-                src={img.src}
-                alt={`galeria-${i}`}
-                className="w-full h-full object-cover rounded-xl shadow-md"
-              />
-            </SwiperSlide>
-          ))}
-        </Swiper>
-        <Lightbox
-          open={index >= 0}
-          close={() => setIndex(-1)}
-          slides={galleryImages}
-          index={index}
-        />
-      </section>
 
       {/* Características */}
       <section className="mt-16">

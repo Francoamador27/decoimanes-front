@@ -22,7 +22,6 @@ const ResumenProducto = (props) => {
                 </div>
                 {/* Imagenes del producto */}
                 <div className="flex-1">
-                    <p className="text-sm">Carrito N° {index + 1}</p>
                     <p className="text-sm">Total de imanes: {producto.cantidad}</p>
                     <p className="text-sm">Precio unidad: {producto.precio_unidad}</p>
                     <p className="text-sm">Sub total: {producto.precio_total}</p>

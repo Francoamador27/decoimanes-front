@@ -14,8 +14,8 @@ const Inicio = () => {
                     <h2 className="text-4xl text-center">Ideas para imanes personalizados</h2>
 
                     <Gallery />
-                    <Testimonials />
                 </div>
+                <Testimonials />
             </div>
         </>
     );

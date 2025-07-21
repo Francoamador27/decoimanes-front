@@ -1,6 +1,7 @@
 import { GiftIcon, SparklesIcon, HeartIcon, StarIcon } from '@heroicons/react/24/outline'
 import unboxing from '../assets/img/unboxing.png';
 import hunboxing from '../assets/img/horizontalunboxin.png';
+import GaleriaSwiper from './GaleriaSwiper';
 const pasos = [
   {
     titulo: "1. Elegí tus fotos favoritas",
@@ -29,11 +30,14 @@ const colores = [
 export default function ComoComprar() {
   return (
     <div className="px-4 sm:px-6 lg:px-8 py-10" id='como-comprar'>
+            <h2 className="text-2xl font-bold text-[#EF2B2D] py-6 text-center">Galeria de ejemplos</h2>
       <div className="mx-auto px-6 lg:px-8 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <GaleriaSwiper />
+
+        <div className=" px-6">
           {/* First Column */}
           <div>
-            <h2 className="text-2xl font-bold text-[#34C6F3] py-6">Cómo Comprar</h2>
+            <h2 className="text-2xl font-bold text-[#EF2B2D] py-6 text-center">Cómo Comprar</h2>
             <div className="grid md:grid-cols-3 gap-8">
               {pasos.map((paso, index) => (
                 <div
@@ -49,12 +53,10 @@ export default function ComoComprar() {
             </div>
           </div>
 
-          {/* Second Column */}
-          <div className="unboxing-container">
-              <img src={hunboxing} alt="Unboxing" className="unboxing-img " />
-          </div>
+
         </div>
       </div>
+
     </div>
   );
 }
